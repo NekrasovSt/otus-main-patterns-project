@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Globalization;
 using Microsoft.Net.Http.Headers;
 
@@ -21,6 +22,11 @@ public class RequestFiller: IFiller
     {
         var dict = new Dictionary<string, object>();
 
+        if (_httpContextAccessor?.HttpContext?.Request?.Headers == null)
+        {
+            return new ReadOnlyDictionary<string, object>(dict);
+        }
+        
         var userAgent = _httpContextAccessor.HttpContext.Request.Headers.ContainsKey(HeaderNames.UserAgent)
             ? _httpContextAccessor.HttpContext.Request.Headers[HeaderNames.UserAgent].ToString()
             : null;

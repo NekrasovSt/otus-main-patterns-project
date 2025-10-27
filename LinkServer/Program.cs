@@ -11,6 +11,7 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<IFiller, IpFiller>();
 builder.Services.AddScoped<IFiller, RequestFiller>();
+builder.Services.AddScoped<IFiller, QueryStringFiller>();
 
 var app = builder.Build();
 

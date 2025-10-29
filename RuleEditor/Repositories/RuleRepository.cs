@@ -132,4 +132,16 @@ public class RuleRepository : IRuleRepository
             await collection.Indexes.CreateOneAsync(uniqueIndex);
         }
     }
+
+    public async Task<Rule> UpdateAsync(Rule rule, CancellationToken token)
+    {
+        var database = _client.GetDatabase("rules");
+        var updatedRule = await database.GetCollection<Rule>(nameof(Rule))
+            .FindOneAndReplaceAsync(p => p.Id == rule.Id, rule, new() { ReturnDocument = ReturnDocument.After }, cancellationToken: token);
+        if (updatedRule == null)
+        {
+            throw new EntityNotException(rule.Id);
+        }
+        return updatedRule;
+    }
 }

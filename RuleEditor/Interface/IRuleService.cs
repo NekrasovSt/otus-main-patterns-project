@@ -10,4 +10,5 @@ public interface IRuleService
     
     Task DeleteAsync(string id, CancellationToken token);
     Task<Rule> AddAsync(Rule newRule, CancellationToken token);
+    Task<Rule> UpdateAsync(Rule rule, CancellationToken token);
 }

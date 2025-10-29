@@ -46,4 +46,11 @@ app.MapPost("/rules", async (RuleDto rule, IRuleService service, CancellationTok
     .WithName("AddRule")
     .WithOpenApi();
 
+app.MapPut("/rules", async (RuleDto rule, IRuleService service, CancellationToken token) =>
+    {
+        var newRule = await service.UpdateAsync(rule.Adapt<Rule>(), token);
+        return Results.Ok(newRule.Adapt<RuleDto>());
+    })
+    .WithName("UpdateRule")
+    .WithOpenApi();
 app.Run();

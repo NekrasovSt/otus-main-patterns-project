@@ -16,6 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Auth\Auth.csproj" />
       <ProjectReference Include="..\RuleEditor\RuleEditor.csproj" />
     </ItemGroup>
 

@@ -2,7 +2,6 @@ using Mapster;
 using RuleEditor;
 using RuleEditor.Dto;
 using RuleEditor.Interface;
-using RuleEditor.Midleware;
 using RuleEditor.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -35,6 +34,7 @@ app.MapDelete("/rules/{id}", async (string id, IRuleService service, Cancellatio
         await service.DeleteAsync(id, token);
         return Results.NoContent();
     })
+    .RequireAuthorization("Default")
     .WithName("DeleteRule")
     .WithOpenApi();
 
@@ -44,7 +44,8 @@ app.MapPost("/rules", async (RuleDto rule, IRuleService service, CancellationTok
         return Results.Created();
     })
     .WithName("AddRule")
-    .WithOpenApi();
+    .WithOpenApi()
+    .RequireAuthorization("Default");
 
 app.MapPut("/rules", async (RuleDto rule, IRuleService service, CancellationToken token) =>
     {
@@ -52,5 +53,6 @@ app.MapPut("/rules", async (RuleDto rule, IRuleService service, CancellationToke
         return Results.Ok(newRule.Adapt<RuleDto>());
     })
     .WithName("UpdateRule")
-    .WithOpenApi();
+    .WithOpenApi()
+    .RequireAuthorization("Default");
 app.Run();

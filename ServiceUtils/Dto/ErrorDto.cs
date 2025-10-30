@@ -1,4 +1,4 @@
-namespace RuleEditor.Dto;
+namespace ServiceUtils.Dto;
 
 public class ErrorDto
 {

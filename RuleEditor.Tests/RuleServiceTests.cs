@@ -1,9 +1,9 @@
 using Moq;
-using RuleEditor.Exceptions;
 using RuleEditor.Interface;
 using RuleEditor.Models;
 using RuleEditor.Services;
 using RuleExecutor;
+using ServiceUtils.Exceptions;
 
 namespace RuleEditor.Tests;
 

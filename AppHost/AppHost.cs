@@ -10,4 +10,10 @@ var apiService =
         .WithReference(mongodb)
         .WaitFor(mongodb);
 
+var authService = 
+    builder.AddProject<Projects.Auth>("auth")
+        .WithReference(mongodb)
+        .WaitFor(mongodb);
+
+
 builder.Build().Run();

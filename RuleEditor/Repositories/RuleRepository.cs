@@ -1,8 +1,8 @@
 using MongoDB.Driver;
-using RuleEditor.Exceptions;
 using RuleEditor.Interface;
 using RuleEditor.Models;
 using RuleExecutor;
+using ServiceUtils.Exceptions;
 
 namespace RuleEditor.Repositories;
 

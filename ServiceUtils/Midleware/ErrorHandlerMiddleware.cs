@@ -1,8 +1,9 @@
 using System.Net;
-using RuleEditor.Dto;
-using RuleEditor.Exceptions;
+using Microsoft.AspNetCore.Http;
+using ServiceUtils.Dto;
+using ServiceUtils.Exceptions;
 
-namespace RuleEditor.Midleware;
+namespace ServiceUtils.Midleware;
 
 public class ErrorHandlerMiddleware
 {

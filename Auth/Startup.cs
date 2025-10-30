@@ -1,36 +1,34 @@
 using System.Security.Cryptography;
 using System.Text.Json.Serialization;
+using Auth.Helpers;
+using Auth.Interfaces;
+using Auth.Repositories;
+using Auth.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
-using RuleEditor.Helpers;
-using RuleEditor.Interface;
-using RuleEditor.Repositories;
-using RuleEditor.Services;
 using ServiceUtils.Midleware;
 
-namespace RuleEditor;
+namespace Auth;
 
 public class Startup
 {
     public static void SetupServices(WebApplicationBuilder builder)
     {
-        
-        builder.Services.AddScoped<IRuleRepository, RuleRepository>();
-        builder.Services.AddScoped<IRuleService, RuleService>();
+        builder.Services.AddSingleton<IKeyStore, KeyStore>();
+        builder.Services.AddScoped<IUserRepository, UserRepository>();
+        builder.Services.AddScoped<ITokenService, TokenService>();
         builder.Services.AddSingleton<IMongoClient>((context) =>
         {
             var configuration = context.GetRequiredService<IConfiguration>();
             return new MongoClient(configuration.GetValue<string>("ConnectionStrings:mongo"));
         });
-        builder.Services.AddSingleton<IKeyStore, KeyStore>();
-        
         builder.Services.ConfigureHttpJsonOptions(options =>
         {
             options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
             options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
         });
-        
+
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddAuthentication(options =>
@@ -71,7 +69,6 @@ public class Startup
             x.AddPolicy("Default", o => o.RequireAuthenticatedUser());
         });
     }
-
     public static async Task SetupMiddleware(WebApplication app)
     {
         if (app.Environment.IsDevelopment())
@@ -86,7 +83,7 @@ public class Startup
         app.UseMiddleware<ErrorHandlerMiddleware>();
 
         using var scope = app.Services.CreateScope();
-        var repository = scope.ServiceProvider.GetService<IRuleRepository>();
+        var repository = scope.ServiceProvider.GetService<IUserRepository>();
 
         await repository.InitDBAsync();
     }

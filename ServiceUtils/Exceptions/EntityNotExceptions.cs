@@ -1,4 +1,4 @@
-namespace RuleEditor.Exceptions;
+namespace ServiceUtils.Exceptions;
 
 public class EntityNotException : Exception
 {

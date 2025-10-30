@@ -14,6 +14,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppHost", "AppHost\AppHost.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuleEditor.Tests", "RuleEditor.Tests\RuleEditor.Tests.csproj", "{2459864F-309F-4A77-AF56-C24CE5D93889}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auth", "Auth\Auth.csproj", "{B634AE5B-706C-445B-8806-018970B63337}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceUtils", "ServiceUtils\ServiceUtils.csproj", "{0CAD09BD-F282-4C73-84B5-BD15D4F39FB2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,5 +52,13 @@ Global
 		{2459864F-309F-4A77-AF56-C24CE5D93889}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2459864F-309F-4A77-AF56-C24CE5D93889}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2459864F-309F-4A77-AF56-C24CE5D93889}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B634AE5B-706C-445B-8806-018970B63337}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B634AE5B-706C-445B-8806-018970B63337}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B634AE5B-706C-445B-8806-018970B63337}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B634AE5B-706C-445B-8806-018970B63337}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CAD09BD-F282-4C73-84B5-BD15D4F39FB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CAD09BD-F282-4C73-84B5-BD15D4F39FB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CAD09BD-F282-4C73-84B5-BD15D4F39FB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CAD09BD-F282-4C73-84B5-BD15D4F39FB2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

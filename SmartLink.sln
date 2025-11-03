@@ -18,6 +18,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auth", "Auth\Auth.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceUtils", "ServiceUtils\ServiceUtils.csproj", "{0CAD09BD-F282-4C73-84B5-BD15D4F39FB2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auth.Client", "Auth.Client\Auth.Client.csproj", "{5DA776A2-8AFD-4A6E-A38D-1E64A0156406}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceDefaults", "ServiceDefaults\ServiceDefaults.csproj", "{6E14CC8B-4A7D-4125-9A5D-865E78065BC2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -60,5 +64,13 @@ Global
 		{0CAD09BD-F282-4C73-84B5-BD15D4F39FB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0CAD09BD-F282-4C73-84B5-BD15D4F39FB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0CAD09BD-F282-4C73-84B5-BD15D4F39FB2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DA776A2-8AFD-4A6E-A38D-1E64A0156406}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DA776A2-8AFD-4A6E-A38D-1E64A0156406}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DA776A2-8AFD-4A6E-A38D-1E64A0156406}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DA776A2-8AFD-4A6E-A38D-1E64A0156406}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E14CC8B-4A7D-4125-9A5D-865E78065BC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E14CC8B-4A7D-4125-9A5D-865E78065BC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E14CC8B-4A7D-4125-9A5D-865E78065BC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E14CC8B-4A7D-4125-9A5D-865E78065BC2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

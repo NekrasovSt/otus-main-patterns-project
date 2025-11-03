@@ -1,0 +1,32 @@
+@page "/users"
+@page "/"
+<h3>Пользователи</h3>
+@if (_isLoading)
+{
+    <div>Загрузка</div>
+}
+else
+{
+    <div class="row">
+        <div class="col-xs-3">
+            <button type="button" class="btn btn-primary float-end" @onclick="AddUser">Новый пользователь</button>
+        </div>
+    </div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Ид</th>
+            <th>Логин</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var user in _users)
+        {
+            <tr>
+                <td>@user.Id</td>
+                <td>@user.Login</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Auth;
 using Auth.Dto;
 using Auth.Services;
+using Mapster;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,13 +15,13 @@ app.MapPost("/token",
     async (ITokenService tokenService, [FromBody] CredentialsDto credentialsDto,
         CancellationToken cancellationToken) =>
     {
-        var token = await tokenService.GetTokenAsync(credentialsDto.Login, credentialsDto.Password, cancellationToken);
-        if (token == null)
+        var result = await tokenService.GetTokenAsync(credentialsDto.Login, credentialsDto.Password, cancellationToken);
+        if (result.Token == null)
         {
             return Results.Unauthorized();
         }
 
-        return Results.Ok(new { Token = token });
+        return Results.Ok(new { Token = result.Token, Expires = result.Expires });
     });
 app.MapPost("/change-password",
     async (ITokenService tokenService, HttpContext context, [FromBody] ChangePasswordDto credentialsDto,
@@ -51,6 +52,11 @@ app.MapPost("/add-user",
             Login = newUserDto.Login,
         });
     }).RequireAuthorization("Default");
-
+app.MapGet("/users",
+    async (ITokenService tokenService, CancellationToken cancellationToken) =>
+    {
+        var users = await tokenService.GetUsers(cancellationToken);
+        return Results.Ok(users.Adapt<IEnumerable<UserDto>>());
+    }).RequireAuthorization("Default");
 
 app.Run();

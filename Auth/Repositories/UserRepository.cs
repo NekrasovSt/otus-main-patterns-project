@@ -64,6 +64,14 @@ public class UserRepository : IUserRepository
                 cancellationToken: token);
     }
 
+    public async Task<IEnumerable<User>> GetUsersAsync(CancellationToken token)
+    {
+        var database = _client.GetDatabase("users");
+        var result = await database.GetCollection<User>(nameof(User))
+            .Find("{}")
+            .ToListAsync(token);
+        return result;
+    }
     public async Task<User> AddUserAsync(User user, CancellationToken token)
     {
         var database = _client.GetDatabase("users");

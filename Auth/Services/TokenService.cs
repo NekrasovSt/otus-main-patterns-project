@@ -19,18 +19,18 @@ public class TokenService : ITokenService
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
     }
 
-    public async Task<string?> GetTokenAsync(string login, string password, CancellationToken cancellationToken)
+    public async Task<(string? Token, DateTime Expires)> GetTokenAsync(string login, string password, CancellationToken cancellationToken)
     {
         var user = await _userRepository.GetUserAsync(login, cancellationToken);
 
         if (user == null)
         {
-            return null;
+            return (null, default);
         }
 
         if (!PasswordHasher.VerifyPasswordHash(password, user.Hash, user.Salt))
         {
-            return null;
+            return (null, default);
         }
 
         using var privateKey = RSA.Create();
@@ -45,16 +45,17 @@ public class TokenService : ITokenService
         };
 
         // создаем объект токена с параметрами
+        var expires = DateTime.Now.AddHours(1).ToUniversalTime();
         var token = new JwtSecurityToken(
             issuer: "otus",
             audience: "otus",
             claims: claims,
-            expires: DateTime.Now.AddHours(1),
+            expires: expires,
             signingCredentials: new SigningCredentials(new RsaSecurityKey(privateKey), SecurityAlgorithms.RsaSha256)
         );
 
         // конвертируем токен в строку
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        return (new JwtSecurityTokenHandler().WriteToken(token), expires);
     }
 
     public async Task<bool> ChangePassword(string login, string password, string newPassword,
@@ -90,5 +91,10 @@ public class TokenService : ITokenService
         newUser.Login = login;
 
         return _userRepository.AddUserAsync(newUser, cancellationToken);
+    }
+
+    public Task<IEnumerable<User>> GetUsers(CancellationToken cancellationToken)
+    {
+        return _userRepository.GetUsersAsync(cancellationToken);
     }
 }

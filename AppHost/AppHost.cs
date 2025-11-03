@@ -15,5 +15,9 @@ var authService =
         .WithReference(mongodb)
         .WaitFor(mongodb);
 
+var authClient = builder.AddProject<Projects.Auth_Client>("auth-client")
+    .WithExternalHttpEndpoints()
+    .WaitFor(authService)
+    .WithReference(authService);
 
 builder.Build().Run();

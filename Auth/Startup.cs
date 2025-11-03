@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Auth.Helpers;
 using Auth.Interfaces;
@@ -8,7 +9,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 using ServiceUtils.Midleware;
-
 namespace Auth;
 
 public class Startup
@@ -68,6 +68,7 @@ public class Startup
         {
             x.AddPolicy("Default", o => o.RequireAuthenticatedUser());
         });
+        builder.Services.AddCors();
     }
     public static async Task SetupMiddleware(WebApplication app)
     {
@@ -80,6 +81,11 @@ public class Startup
         app.UseHttpsRedirection();
         app.UseAuthentication();
         app.UseAuthorization();
+        app.UseCors(builder => builder
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+        );
         app.UseMiddleware<ErrorHandlerMiddleware>();
 
         using var scope = app.Services.CreateScope();

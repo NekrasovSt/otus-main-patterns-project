@@ -1,13 +1,12 @@
 using System.Text.Json.Serialization;
-using RuleExecutor;
 using ServiceUtils.Serialization;
 
-namespace RuleEditor.Dto;
+namespace LinkServer.Dto;
 
 public class FilterConditionDto
 {
     public LogicalOperator LogicalOperator { get; set; } = LogicalOperator.And;
-    public List<FilterCondition> Conditions { get; set; } = new();
+    public List<FilterConditionDto> Conditions { get; set; } = new();
     public string? Field { get; set; }
     public string? Operator { get; set; }
     [JsonConverter(typeof(FlexibleObjectConverter))]

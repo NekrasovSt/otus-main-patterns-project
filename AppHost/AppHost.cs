@@ -5,7 +5,7 @@ var mongodb = builder.AddMongoDB("mongo")
     .WithMongoExpress();
 
 
-var apiService = 
+var ruleEditor = 
     builder.AddProject<Projects.RuleEditor>("rule-editor")
         .WithReference(mongodb)
         .WaitFor(mongodb);
@@ -16,8 +16,12 @@ var authService =
         .WaitFor(mongodb);
 
 var authClient = builder.AddProject<Projects.Auth_Client>("auth-client")
-    .WithExternalHttpEndpoints()
     .WaitFor(authService)
     .WithReference(authService);
+
+var linkServer = builder.AddProject<Projects.LinkServer>("link-server")
+    .WaitFor(ruleEditor)
+    .WithReference(ruleEditor);
+
 
 builder.Build().Run();

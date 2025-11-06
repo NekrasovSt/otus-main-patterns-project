@@ -27,8 +27,4 @@
       <ProjectReference Include="..\LinkServer\LinkServer.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Mock\" />
-    </ItemGroup>
-
 </Project>

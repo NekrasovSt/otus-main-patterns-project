@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace RuleEditor.Serialization;
+namespace ServiceUtils.Serialization;
 
 public class FlexibleObjectConverter : JsonConverter<object>
 {

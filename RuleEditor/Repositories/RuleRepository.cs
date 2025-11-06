@@ -90,9 +90,10 @@ public class RuleRepository : IRuleRepository
                 FilterCondition = new FilterCondition()
                 {
                     Operator = "IN",
-                    Field = "language",
-                    Value = new[] { "ru", "en" },
-                }
+                    Field = "preferredLanguage",
+                    Value = new[] { "fr" },
+                },
+                Link = "https://www.fr.com",
             };
             await database.GetCollection<Rule>(nameof(Rule)).InsertOneAsync(newRule);
             newRule = new Rule
@@ -104,7 +105,8 @@ public class RuleRepository : IRuleRepository
                     Operator = "!=",
                     Field = "browser",
                     Value = "Chrome",
-                }
+                },
+                Link = "http://www.yandex.ru",
             };
             await database.GetCollection<Rule>(nameof(Rule)).InsertOneAsync(newRule);
             newRule = new Rule

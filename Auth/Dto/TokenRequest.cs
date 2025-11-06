@@ -3,9 +3,9 @@ using System.ComponentModel.DataAnnotations;
 namespace Auth.Dto;
 
 /// <summary>
-/// Пользователь
+/// Запрос на получения токена
 /// </summary>
-public class UserDto
+public class TokenRequest
 {
     /// <summary>
     /// Логин
@@ -14,8 +14,8 @@ public class UserDto
     public string Login { get; set; }
 
     /// <summary>
-    /// Ид
+    /// Пароль
     /// </summary>
     [Required]
-    public string Id { get; set; }
+    public string Password { get; set; }
 }

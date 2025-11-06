@@ -7,6 +7,7 @@ using Auth.Repositories;
 using Auth.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using MongoDB.Driver;
 using ServiceUtils.Midleware;
 namespace Auth;
@@ -69,12 +70,18 @@ public class Startup
             x.AddPolicy("Default", o => o.RequireAuthenticatedUser());
         });
         builder.Services.AddCors();
+        builder.Services.AddSwaggerGen(c =>
+        {
+            c.EnableAnnotations();
+            var filePath = Path.Combine(AppContext.BaseDirectory, "Auth.xml");
+            c.IncludeXmlComments(filePath);
+        });
     }
     public static async Task SetupMiddleware(WebApplication app)
     {
         if (app.Environment.IsDevelopment())
         {
-            app.UseSwagger();
+            app.UseSwagger( options => options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_0);
             app.UseSwaggerUI();
         }
 

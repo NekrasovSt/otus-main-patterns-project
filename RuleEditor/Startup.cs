@@ -70,6 +70,12 @@ public class Startup
         {
             x.AddPolicy("Default", o => o.RequireAuthenticatedUser());
         });
+        builder.Services.AddSwaggerGen(c =>
+        {
+            c.EnableAnnotations();
+            var filePath = Path.Combine(AppContext.BaseDirectory, "RuleEditor.xml");
+            c.IncludeXmlComments(filePath);
+        });
     }
 
     public static async Task SetupMiddleware(WebApplication app)

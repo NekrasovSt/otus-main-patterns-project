@@ -3,8 +3,14 @@ using RuleEditor.Models;
 
 namespace RuleEditor.Services;
 
+/// <summary>
+/// Валидация правила
+/// </summary>
 public class RuleValidator : FlatValidator<Rule>
 {
+    /// <summary>
+    /// Конструктор
+    /// </summary>
     public RuleValidator()
     {
         ValidIf(m => m.Link.IsAbsoluteUri(), $"Поле {nameof(Rule.Link)} должно быть валидным url", m => m.Link);

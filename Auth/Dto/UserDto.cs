@@ -11,11 +11,11 @@ public class UserDto
     /// Логин
     /// </summary>
     [Required]
-    public string Login { get; set; }
+    public required string Login { get; set; }
 
     /// <summary>
     /// Ид
     /// </summary>
     [Required]
-    public string Id { get; set; }
+    public required string Id { get; set; }
 }

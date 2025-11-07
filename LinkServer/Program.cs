@@ -68,9 +68,12 @@ app.UseHttpsRedirection();
 app.MapGet("/link", [SwaggerOperation("Переход по ссылке согластно правилу")]
         async (HttpContext context, [FromServices] ILinkRedirector service, CancellationToken token) =>
         {
-            var url = await service.RedirectAsync(
-                (Dictionary<string, object>)context.Items[EnrichMiddleware.ContextKey], token);
-            return Results.Redirect(url);
+            if(context.Items.TryGetValue(EnrichMiddleware.ContextKey, out var value) && value is Dictionary<string, object> dictionary)
+            {
+                var url = await service.RedirectAsync(dictionary, token);
+                return Results.Redirect(url);
+            }
+            throw new InvalidOperationException("Не достаточно параметров");
         })
     .WithName("Link")
     .WithOpenApi()

@@ -17,7 +17,7 @@ public class RuleDto
     /// <summary>
     /// Название
     /// </summary>
-    public string Name { get; set; }
+    public required string Name { get; set; }
 
     /// <summary>
     /// Порядок проверки правил
@@ -27,10 +27,10 @@ public class RuleDto
     /// <summary>
     /// Ссылка для перехода
     /// </summary>
-    public string Link { get; set; }
+    public required string Link { get; set; }
 
     /// <summary>
     /// Фильтры
     /// </summary>
-    public FilterConditionDto FilterCondition { get; set; }
+    public required FilterConditionDto FilterCondition { get; set; }
 }

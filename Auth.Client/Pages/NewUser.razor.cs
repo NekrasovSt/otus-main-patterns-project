@@ -10,8 +10,8 @@ public partial class NewUser : ComponentBase
     private readonly EditContext _context;
     private string? _errorMessage = null;
     private readonly NewUserDto _request;
-    [Inject] protected NavigationManager Navigation { get; set; }
-    [Inject] protected IAuthClient AuthClient { get; set; }
+    [Inject] protected NavigationManager? Navigation { get; set; }
+    [Inject] protected IAuthClient? AuthClient { get; set; }
 
     public NewUser()
     {
@@ -24,8 +24,8 @@ public partial class NewUser : ComponentBase
         _errorMessage = null;
         try
         {
-            await AuthClient.AddUserAsync(_request);
-            Navigation.NavigateTo("/users");
+            await AuthClient!.AddUserAsync(_request);
+            Navigation!.NavigateTo("/users");
         }
         catch (ServiceErrorException e)
         {

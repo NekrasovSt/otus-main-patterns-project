@@ -4,14 +4,32 @@ using RuleExecutor;
 
 namespace RuleEditor.Models;
 
+/// <summary>
+/// Правило
+/// </summary>
 public class Rule
 {
+    /// <summary>
+    /// Ид
+    /// </summary>
     [BsonRepresentation(BsonType.ObjectId)]
     public string? Id { get; set; }
 
-    [BsonRequired] public string Name { get; set; }
+    /// <summary>
+    /// Название
+    /// </summary>
+    [BsonRequired] public required string Name { get; set; }
+    /// <summary>
+    /// Порядок правила
+    /// </summary>
     public int Order { get; set; }
 
-    public string Link { get; set; }
-    public FilterCondition? FilterCondition { get; set; }
+    /// <summary>
+    /// Ссылка
+    /// </summary>
+    public required string Link { get; set; }
+    /// <summary>
+    /// Условия фильтрации
+    /// </summary>
+    public required FilterCondition FilterCondition { get; set; }
 }

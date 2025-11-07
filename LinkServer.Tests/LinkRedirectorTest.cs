@@ -14,7 +14,7 @@ public class LinkRedirectorTest
         var cache = new Mock<IMemoryCache>();
         cache.Setup(i=>i.CreateEntry(It.IsAny<object>())).Returns(Mock.Of<ICacheEntry>());
         object cachedRules = Array.Empty<RuleDto>();
-        cache.Setup(i => i.TryGetValue("rules", out cachedRules)).Returns(true);
+        cache.Setup(i => i.TryGetValue("rules", out cachedRules!)).Returns(true);
         var service = new LinkRedirector(Mock.Of<IRuleEditorClient>(), cache.Object);
 
         var dict = new Dictionary<string, object>()
@@ -37,6 +37,8 @@ public class LinkRedirectorTest
                 new RuleDto()
                 {
                     Link = "http://another-link.com",
+                    Id = "6900b8a5ce7ec3c503c5a3e3",
+                    Name = "Rule 1",
                     FilterCondition = new FilterConditionDto()
                     {
                         Field = "field",
@@ -45,7 +47,7 @@ public class LinkRedirectorTest
                     }
                 }
             };
-        cache.Setup(i => i.TryGetValue("rules", out cachedRules)).Returns(true);
+        cache.Setup(i => i.TryGetValue("rules", out cachedRules!)).Returns(true);
         var service = new LinkRedirector(client.Object, cache.Object);
 
         var dict = new Dictionary<string, object>()
@@ -67,6 +69,8 @@ public class LinkRedirectorTest
             new RuleDto()
             {
                 Link = "http://another-link.com",
+                Id = "6900b8a5ce7ec3c503c5a3e3",
+                Name = "Rule 1",
                 FilterCondition = new FilterConditionDto()
                 {
                     Field = "field",

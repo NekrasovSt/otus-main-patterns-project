@@ -2,6 +2,6 @@ namespace Auth.Client.Dto;
 
 public class LoginResponseDto
 {
-    public string Token { get; set; }
-    public DateTime Expires { get; set; }
+    public required string Token { get; set; }
+    public required DateTime Expires { get; set; }
 }

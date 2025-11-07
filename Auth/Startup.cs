@@ -12,8 +12,14 @@ using MongoDB.Driver;
 using ServiceUtils.Midleware;
 namespace Auth;
 
-public class Startup
+/// <summary>
+/// Настройка приложения
+/// </summary>
+public static class Startup
 {
+    /// <summary>
+    /// Регистрация сервисов
+    /// </summary>
     public static void SetupServices(WebApplicationBuilder builder)
     {
         builder.Services.AddSingleton<IKeyStore, KeyStore>();
@@ -40,7 +46,7 @@ public class Startup
             })
             .AddJwtBearer(options =>
             {
-                var store = builder.Services.BuildServiceProvider().GetService<IKeyStore>();
+                var store = builder.Services.BuildServiceProvider().GetRequiredService<IKeyStore>();
                 // создаем объект RSA
                 var publicKey = RSA.Create();
                 // импортируем публичный ключ для проверки подписи
@@ -77,6 +83,9 @@ public class Startup
             c.IncludeXmlComments(filePath);
         });
     }
+    /// <summary>
+    /// Настройка Middleware
+    /// </summary>
     public static async Task SetupMiddleware(WebApplication app)
     {
         if (app.Environment.IsDevelopment())
@@ -96,7 +105,7 @@ public class Startup
         app.UseMiddleware<ErrorHandlerMiddleware>();
 
         using var scope = app.Services.CreateScope();
-        var repository = scope.ServiceProvider.GetService<IUserRepository>();
+        var repository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
 
         await repository.InitDBAsync();
     }

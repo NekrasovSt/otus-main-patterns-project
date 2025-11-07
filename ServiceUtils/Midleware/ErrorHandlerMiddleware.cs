@@ -38,7 +38,7 @@ public class ErrorHandlerMiddleware
             context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
             await context.Response.WriteAsJsonAsync(new ErrorDto() { Message = e.Message });
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             await context.Response.WriteAsJsonAsync(new ErrorDto() { Message = "Внутрення ошибка" });

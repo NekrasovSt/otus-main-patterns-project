@@ -6,5 +6,5 @@ public class EntityAlreadyExistException : Exception
     {
     }
 
-    public string PropertyName { get; set; }
+    public required string PropertyName { get; set; }
 }

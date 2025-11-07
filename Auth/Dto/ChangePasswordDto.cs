@@ -11,10 +11,10 @@ public class ChangePasswordDto
     /// Старый пароль
     /// </summary>
     [Required]
-    public string Password { get; set; }
+    public required string Password { get; set; }
     /// <summary>
     /// Новый пароль
     /// </summary>
     [Required]
-    public string NewPassword { get; set; }
+    public required string NewPassword { get; set; }
 }

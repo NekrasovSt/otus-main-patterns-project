@@ -11,10 +11,10 @@ public class LoginResponseDto
     /// Токен
     /// </summary>
     [Required]
-    public string Token { get; set; }
+    public required string Token { get; set; }
     /// <summary>
     /// Время окончания токена
     /// </summary>
     [Required]
-    public DateTime Expires { get; set; }
+    public required DateTime Expires { get; set; }
 }

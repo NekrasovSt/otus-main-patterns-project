@@ -3,12 +3,17 @@ using System.Text;
 
 namespace Auth.Helpers;
 
+/// <summary>
+/// Вычисление хэша пароля
+/// </summary>
 public static class PasswordHasher
 {
-    // Creates a hashed version of the provided password along with a unique salt.
-    // password: The plaintext password to be hashed.
-    // passwordHash: Outputs the resulting password hash as a byte array.
-    // passwordSalt: Outputs the unique salt used in hashing as a byte array.
+    /// <summary>
+    /// Creates a hashed version of the provided password along with a unique salt.
+    /// </summary>
+    /// <param name="password">The plaintext password to be hashed.</param>
+    /// <param name="passwordHash">Outputs the resulting password hash as a byte array.</param>
+    /// <param name="passwordSalt">Outputs the unique salt used in hashing as a byte array.</param>
     public static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
     {
         // Instantiate HMACSHA512 to generate a cryptographic hash and a unique key (salt).
@@ -21,7 +26,9 @@ public static class PasswordHasher
         passwordHash = hmac.ComputeHash(passwordBytes); // Assign the computed hash to the output parameter.
     }
 
-    // Verifies whether the provided password matches the stored hash using the stored salt.
+    /// <summary>
+    /// Verifies whether the provided password matches the stored hash using the stored salt.
+    /// </summary>
     // password: The plaintext password to verify.
     // storedHash: The stored password hash to compare against.
     // storedSalt: The stored salt used during the original hashing process.

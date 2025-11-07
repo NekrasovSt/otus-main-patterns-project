@@ -6,21 +6,30 @@ using RuleExecutor;
 
 namespace LinkServer.Middleware;
 
-public class LinkRedirector: ILinkRedirector
+/// <inheritdoc />
+public class LinkRedirector : ILinkRedirector
 {
     private readonly IRuleEditorClient _ruleEditorClient;
     private readonly IMemoryCache _memoryCache;
 
+    /// <summary>
+    /// Ссылка по умолчанию если не одно правило не сработало
+    /// </summary>
     public const string DefaultLink = "https://otus.ru";
+
+    /// <summary>
+    /// Конструктор
+    /// </summary>
     public LinkRedirector(IRuleEditorClient ruleEditorClient, IMemoryCache memoryCache)
     {
         _ruleEditorClient = ruleEditorClient ?? throw new ArgumentNullException(nameof(ruleEditorClient));
         _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
     }
 
+    /// <inheritdoc />
     public async Task<string> RedirectAsync(Dictionary<string, object> dictionary, CancellationToken token)
     {
-        if (!_memoryCache.TryGetValue("rules", out IEnumerable<CompiledRule>? compiledRules))
+        if (!_memoryCache.TryGetValue("rules", out IEnumerable<CompiledRule>? compiledRules) || compiledRules == null)
         {
             var builder = new DictionaryExpressionBuilder();
             var rules = await _ruleEditorClient.GetRules(token);
@@ -31,14 +40,11 @@ public class LinkRedirector: ILinkRedirector
                 Name = rule.Name,
                 Predicate = builder.BuildExpression(rule.FilterCondition.Adapt<FilterCondition>()).Compile(),
             }).ToList();
-            
+
             using var entry = _memoryCache.CreateEntry("rules");
             entry.Value = compiledRules;
         }
 
-
-        
-        
         foreach (var rule in compiledRules)
         {
             if (rule.Predicate.Invoke(dictionary))
@@ -46,7 +52,7 @@ public class LinkRedirector: ILinkRedirector
                 return rule.Link;
             }
         }
-        
+
         return DefaultLink;
     }
 }

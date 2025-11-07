@@ -6,15 +6,20 @@ using ServiceUtils.Exceptions;
 
 namespace RuleEditor.Repositories;
 
+/// <inheritdoc />
 public class RuleRepository : IRuleRepository
 {
     private readonly IMongoClient _client;
 
+    /// <summary>
+    /// Конструктор
+    /// </summary>
     public RuleRepository(IMongoClient client)
     {
         _client = client ?? throw new ArgumentNullException(nameof(client));
     }
 
+    /// <inheritdoc />
     public async Task<IEnumerable<Rule>> GetAllAsync(CancellationToken token)
     {
         var database = _client.GetDatabase("rules");
@@ -23,6 +28,7 @@ public class RuleRepository : IRuleRepository
         return result;
     }
 
+    /// <inheritdoc />
     public async Task<Rule> GetAsync(string id, CancellationToken token)
     {
         var database = _client.GetDatabase("rules");
@@ -37,6 +43,7 @@ public class RuleRepository : IRuleRepository
         return rule;
     }
 
+    /// <inheritdoc />
     public async Task DeleteAsync(string id, CancellationToken token)
     {
         var database = _client.GetDatabase("rules");
@@ -48,8 +55,10 @@ public class RuleRepository : IRuleRepository
         }
     }
 
+    /// <inheritdoc />
     public async Task<Rule> AddAsync(Rule newRule, CancellationToken token)
     {
+        newRule.Id = null;
         var database = _client.GetDatabase("rules");
         if (newRule.Order == 0)
         {
@@ -74,6 +83,7 @@ public class RuleRepository : IRuleRepository
         return newRule;
     }
 
+    /// <inheritdoc />
     public async Task InitDBAsync()
     {
         var database = _client.GetDatabase("rules");
@@ -113,6 +123,7 @@ public class RuleRepository : IRuleRepository
             {
                 Order = 2,
                 Name = "Демо правило 3",
+                Link = "http://www.google.ru",
                 FilterCondition = new FilterCondition()
                 {
                     Operator = "=",
@@ -135,8 +146,13 @@ public class RuleRepository : IRuleRepository
         }
     }
 
+    /// <inheritdoc />
     public async Task<Rule> UpdateAsync(Rule rule, CancellationToken token)
     {
+        if (rule.Id == null)
+        {
+            throw new NullReferenceException(nameof(rule.Id));
+        }
         var database = _client.GetDatabase("rules");
         var updatedRule = await database.GetCollection<Rule>(nameof(Rule))
             .FindOneAndReplaceAsync(p => p.Id == rule.Id, rule, new() { ReturnDocument = ReturnDocument.After }, cancellationToken: token);

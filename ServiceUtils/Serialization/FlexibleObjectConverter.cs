@@ -5,7 +5,7 @@ namespace ServiceUtils.Serialization;
 
 public class FlexibleObjectConverter : JsonConverter<object>
 {
-    public override object Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override object? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         switch (reader.TokenType)
         {
@@ -26,7 +26,7 @@ public class FlexibleObjectConverter : JsonConverter<object>
                 return false;
                 
             case JsonTokenType.StartArray:
-                var list = new List<object>();
+                var list = new List<object?>();
                 while (reader.Read() && reader.TokenType != JsonTokenType.EndArray)
                 {
                     list.Add(Read(ref reader, typeToConvert, options));

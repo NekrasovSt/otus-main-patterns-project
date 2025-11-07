@@ -22,8 +22,8 @@ public class RequestFillerTests
     public void IsMobile(string userAgent, bool resultValue)
     {
         var accessor = new Mock<IHttpContextAccessor>();
-        accessor.Setup(i => i.HttpContext.Request.Headers.ContainsKey(HeaderNames.UserAgent)).Returns(true);
-        accessor.Setup(i => i.HttpContext.Request.Headers[HeaderNames.UserAgent]).Returns(userAgent);
+        accessor.Setup(i => i.HttpContext!.Request.Headers.ContainsKey(HeaderNames.UserAgent)).Returns(true);
+        accessor.Setup(i => i.HttpContext!.Request.Headers[HeaderNames.UserAgent]).Returns(userAgent);
 
         var service = new RequestFiller(accessor.Object);
         var result = service.Fill();
@@ -49,8 +49,8 @@ public class RequestFillerTests
     public void Os(string userAgent, string os)
     {
         var accessor = new Mock<IHttpContextAccessor>();
-        accessor.Setup(i => i.HttpContext.Request.Headers.ContainsKey(HeaderNames.UserAgent)).Returns(true);
-        accessor.Setup(i => i.HttpContext.Request.Headers[HeaderNames.UserAgent]).Returns(userAgent);
+        accessor.Setup(i => i.HttpContext!.Request.Headers.ContainsKey(HeaderNames.UserAgent)).Returns(true);
+        accessor.Setup(i => i.HttpContext!.Request.Headers[HeaderNames.UserAgent]).Returns(userAgent);
 
         var service = new RequestFiller(accessor.Object);
         var result = service.Fill();
@@ -80,8 +80,8 @@ public class RequestFillerTests
     public void Browser(string userAgent, string browser)
     {
         var accessor = new Mock<IHttpContextAccessor>();
-        accessor.Setup(i => i.HttpContext.Request.Headers.ContainsKey(HeaderNames.UserAgent)).Returns(true);
-        accessor.Setup(i => i.HttpContext.Request.Headers[HeaderNames.UserAgent]).Returns(userAgent);
+        accessor.Setup(i => i.HttpContext!.Request.Headers.ContainsKey(HeaderNames.UserAgent)).Returns(true);
+        accessor.Setup(i => i.HttpContext!.Request.Headers[HeaderNames.UserAgent]).Returns(userAgent);
 
         var service = new RequestFiller(accessor.Object);
         var result = service.Fill();
@@ -94,8 +94,8 @@ public class RequestFillerTests
     public void Language(string acceptLanguage, string language, string all)
     {
         var accessor = new Mock<IHttpContextAccessor>();
-        accessor.Setup(i => i.HttpContext.Request.Headers.ContainsKey(HeaderNames.AcceptLanguage)).Returns(true);
-        accessor.Setup(i => i.HttpContext.Request.Headers[HeaderNames.AcceptLanguage]).Returns(acceptLanguage);
+        accessor.Setup(i => i.HttpContext!.Request.Headers.ContainsKey(HeaderNames.AcceptLanguage)).Returns(true);
+        accessor.Setup(i => i.HttpContext!.Request.Headers[HeaderNames.AcceptLanguage]).Returns(acceptLanguage);
 
         var service = new RequestFiller(accessor.Object);
         var result = service.Fill();

@@ -6,8 +6,8 @@ namespace Auth.Client.Pages;
 
 public partial class Users : ComponentBase
 {
-    [Inject] protected IAuthClient AuthClient { get; set; }
-    [Inject] protected NavigationManager Navigation { get; set; }
+    [Inject] protected IAuthClient? AuthClient { get; set; }
+    [Inject] protected NavigationManager? Navigation { get; set; }
     private bool _isLoading = false;
 
     private IEnumerable<UserDto> _users = new List<UserDto>();
@@ -19,11 +19,11 @@ public partial class Users : ComponentBase
         _isLoading = true;
         try
         {
-            _users = await AuthClient.GetUsersAsync();
+            _users = await AuthClient!.GetUsersAsync();
         }
         catch (UnauthorizedAccessException)
         {
-            Navigation.NavigateTo("/login");
+            Navigation!.NavigateTo("/login");
         }
         finally
         {
@@ -33,6 +33,6 @@ public partial class Users : ComponentBase
 
     private void AddUser()
     {
-        Navigation.NavigateTo("/new-user");
+        Navigation!.NavigateTo("/new-user");
     }
 }

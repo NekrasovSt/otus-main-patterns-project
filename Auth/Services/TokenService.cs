@@ -8,17 +8,22 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Auth.Services;
 
+/// <inheritdoc />
 public class TokenService : ITokenService
 {
     private readonly IKeyStore _keyStore;
     private readonly IUserRepository _userRepository;
 
+    /// <summary>
+    /// Конструктор
+    /// </summary>
     public TokenService(IKeyStore keyStore, IUserRepository userRepository)
     {
         _keyStore = keyStore ?? throw new ArgumentNullException(nameof(keyStore));
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
     }
 
+    /// <inheritdoc />
     public async Task<(string? Token, DateTime Expires)> GetTokenAsync(string login, string password, CancellationToken cancellationToken)
     {
         var user = await _userRepository.GetUserAsync(login, cancellationToken);
@@ -58,6 +63,7 @@ public class TokenService : ITokenService
         return (new JwtSecurityTokenHandler().WriteToken(token), expires);
     }
 
+    /// <inheritdoc />
     public async Task<bool> ChangePassword(string login, string password, string newPassword,
         CancellationToken cancellationToken)
     {
@@ -81,18 +87,22 @@ public class TokenService : ITokenService
         return true;
     }
 
+    /// <inheritdoc />
     public Task<User> AddUser(string login, string password, CancellationToken cancellationToken)
     {
-        var newUser = new User();
         PasswordHasher.CreatePasswordHash(password, out byte[] hash, out var salt);
 
-        newUser.Hash = hash;
-        newUser.Salt = salt;
-        newUser.Login = login;
+        var newUser = new User
+        {
+            Hash = hash,
+            Salt = salt,
+            Login = login
+        };
 
         return _userRepository.AddUserAsync(newUser, cancellationToken);
     }
 
+    /// <inheritdoc />
     public Task<IEnumerable<User>> GetUsers(CancellationToken cancellationToken)
     {
         return _userRepository.GetUsersAsync(cancellationToken);

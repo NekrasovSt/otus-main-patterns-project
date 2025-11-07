@@ -14,8 +14,14 @@ using ServiceUtils.Midleware;
 
 namespace RuleEditor;
 
-public class Startup
+/// <summary>
+/// Настройка приложения
+/// </summary>
+public static class Startup
 {
+    /// <summary>
+    /// Регистрация сервисов
+    /// </summary>
     public static void SetupServices(WebApplicationBuilder builder)
     {
         
@@ -44,7 +50,7 @@ public class Startup
             })
             .AddJwtBearer(options =>
             {
-                var store = builder.Services.BuildServiceProvider().GetService<IKeyStore>();
+                var store = builder.Services.BuildServiceProvider().GetRequiredService<IKeyStore>();
                 // создаем объект RSA
                 var publicKey = RSA.Create();
                 // импортируем публичный ключ для проверки подписи
@@ -103,6 +109,9 @@ public class Startup
         });
     }
 
+    /// <summary>
+    /// Настройка Middleware
+    /// </summary>
     public static async Task SetupMiddleware(WebApplication app)
     {
         if (app.Environment.IsDevelopment())
@@ -117,7 +126,7 @@ public class Startup
         app.UseMiddleware<ErrorHandlerMiddleware>();
 
         using var scope = app.Services.CreateScope();
-        var repository = scope.ServiceProvider.GetService<IRuleRepository>();
+        var repository = scope.ServiceProvider.GetRequiredService<IRuleRepository>();
 
         await repository.InitDBAsync();
     }

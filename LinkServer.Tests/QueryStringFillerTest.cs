@@ -10,7 +10,7 @@ public class QueryStringFillerTest
     public void EmptyQuery()
     {
         var accessor = new Mock<IHttpContextAccessor>();
-        accessor.Setup(i => i.HttpContext.Request.Query).Returns(new TestQueryCollection(new Dictionary<string, StringValues>()));
+        accessor.Setup(i => i.HttpContext!.Request.Query).Returns(new TestQueryCollection(new Dictionary<string, StringValues>()));
         var service = new QueryStringFiller(accessor.Object);
         var dictionary = service.Fill();
         Assert.Empty(dictionary);
@@ -20,7 +20,7 @@ public class QueryStringFillerTest
     public void FieldsExist()
     {
         var accessor = new Mock<IHttpContextAccessor>();
-        accessor.Setup(i => i.HttpContext.Request.Query).Returns(new TestQueryCollection(new Dictionary<string, StringValues>()
+        accessor.Setup(i => i.HttpContext!.Request.Query).Returns(new TestQueryCollection(new Dictionary<string, StringValues>()
         {
             {"param1", new StringValues("value")},
             {"param2", new StringValues(["value1", "value2"])}

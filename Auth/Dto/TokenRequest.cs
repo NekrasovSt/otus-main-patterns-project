@@ -11,11 +11,11 @@ public class TokenRequest
     /// Логин
     /// </summary>
     [Required]
-    public string Login { get; set; }
+    public required string Login { get; set; }
 
     /// <summary>
     /// Пароль
     /// </summary>
     [Required]
-    public string Password { get; set; }
+    public required string Password { get; set; }
 }

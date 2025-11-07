@@ -3,10 +3,16 @@ using RuleExecutor;
 
 namespace RuleEditor.Services;
 
+/// <summary>
+/// Валидация условий
+/// </summary>
 public class FilterConditionValidator : FlatValidator<FilterCondition>
 {
     private string[] Operators = ["=", "!=", "IN", "CONTAINS", ">", "<", "<=", ">="];
 
+    /// <summary>
+    /// Конструктор
+    /// </summary>
     public FilterConditionValidator()
     {
         ErrorIf(i => i.Operator.IsEmpty(), $"Поле {nameof(FilterCondition.Operator)} не должно быть пустым",

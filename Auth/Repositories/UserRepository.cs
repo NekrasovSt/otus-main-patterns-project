@@ -7,15 +7,20 @@ using ServiceUtils.Exceptions;
 
 namespace Auth.Repositories;
 
+/// <inheritdoc />
 public class UserRepository : IUserRepository
 {
     private readonly IMongoClient _client;
 
+    /// <summary>
+    /// Конструктор
+    /// </summary>
     public UserRepository(IMongoClient client)
     {
         _client = client ?? throw new ArgumentNullException(nameof(client));
     }
 
+    /// <inheritdoc />
     public async Task InitDBAsync()
     {
         var database = _client.GetDatabase("users");
@@ -49,13 +54,15 @@ public class UserRepository : IUserRepository
         }
     }
 
+    /// <inheritdoc />
     public Task<User?> GetUserAsync(string login, CancellationToken token)
     {
         var database = _client.GetDatabase("users");
-        return database.GetCollection<User?>(nameof(User)).Find(p => p.Login == login)
+        return database.GetCollection<User?>(nameof(User)).Find(p => p!.Login == login)
             .FirstOrDefaultAsync(token);
     }
 
+    /// <inheritdoc />
     public async Task<User?> UpdateUserAsync(User user, CancellationToken token)
     {
         var database = _client.GetDatabase("users");
@@ -64,6 +71,7 @@ public class UserRepository : IUserRepository
                 cancellationToken: token);
     }
 
+    /// <inheritdoc />
     public async Task<IEnumerable<User>> GetUsersAsync(CancellationToken token)
     {
         var database = _client.GetDatabase("users");
@@ -72,6 +80,8 @@ public class UserRepository : IUserRepository
             .ToListAsync(token);
         return result;
     }
+
+    /// <inheritdoc />
     public async Task<User> AddUserAsync(User user, CancellationToken token)
     {
         var database = _client.GetDatabase("users");

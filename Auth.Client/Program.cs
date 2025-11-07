@@ -12,7 +12,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddHttpClient("auth", (serviceProvider, client) =>
 {
     var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-    var url = configuration.GetValue<string>("authService:url");
+    var url = configuration.GetValue<string>("authService:url") ?? throw new ArgumentNullException("configuration.authService:url");
     client.BaseAddress = new Uri(url);
 });
 builder.Services.AddScoped<IAuthClient, AuthClient>();

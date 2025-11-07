@@ -4,20 +4,42 @@ using Microsoft.Net.Http.Headers;
 
 namespace LinkServer;
 
+/// <summary>
+/// Основная информация из запроса браузер, тип устройства, ос
+/// </summary>
 public class RequestFiller: IFiller
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
+    /// <summary>
+    /// Тип браузера
+    /// </summary>
     public const string Browser = "browser";
+    /// <summary>
+    /// Тип устройства
+    /// </summary>
     public const string IsMobile = "isMobile";
+    /// <summary>
+    /// ОС
+    /// </summary>
     public const string Os = "os";
+    /// <summary>
+    /// Предпочитаемый язык
+    /// </summary>
     public const string PreferredLanguage = "preferredLanguage";
+    /// <summary>
+    /// Все возможные языки
+    /// </summary>
     public const string AllLanguages = "allLanguages";
 
+    /// <summary>
+    /// Конструктор
+    /// </summary>
     public RequestFiller(IHttpContextAccessor httpContextAccessor)
     {
         _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
     }
 
+    /// <inheritdoc />
     public IReadOnlyDictionary<string, object> Fill()
     {
         var dict = new Dictionary<string, object>();

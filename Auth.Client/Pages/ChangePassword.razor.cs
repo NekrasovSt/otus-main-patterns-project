@@ -9,9 +9,9 @@ public partial class ChangePassword : ComponentBase
 {
     private readonly EditContext _context;
     private string? _errorMessage = null;
-    private ChangePasswordDto? _request;
-    [Inject] protected NavigationManager Navigation { get; set; }
-    [Inject] protected IAuthClient AuthClient { get; set; }
+    private readonly ChangePasswordDto _request;
+    [Inject] protected NavigationManager? Navigation { get; set; }
+    [Inject] protected IAuthClient? AuthClient { get; set; }
 
     public ChangePassword()
     {
@@ -23,8 +23,8 @@ public partial class ChangePassword : ComponentBase
     {
         try
         {
-            await AuthClient.ChangePasswordAsync(_request);
-            Navigation.NavigateTo("/users");
+            await AuthClient!.ChangePasswordAsync(_request);
+            Navigation!.NavigateTo("/users");
         }
         catch (ServiceErrorException e)
         {

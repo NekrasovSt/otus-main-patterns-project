@@ -36,6 +36,10 @@ public class AuthClient : IAuthClient
         var result = await client.GetAsync("/users");
         result.EnsureSuccessStatusCode();
         var response = await result.Content.ReadFromJsonAsync<IEnumerable<UserDto>>();
+        if (response == null)
+        {
+            throw new NullReferenceException(nameof(response));
+        }
         return response;
     }
 
@@ -49,7 +53,7 @@ public class AuthClient : IAuthClient
         if (!result.IsSuccessStatusCode)
         {
             var errorDto = await result.Content.ReadFromJsonAsync<ErrorDto>();
-            throw new ServiceErrorException(errorDto.Id, errorDto.Message);
+            throw new ServiceErrorException(errorDto?.Id, errorDto?.Message ?? "Внутренняя ошибка");
         }
     }
 

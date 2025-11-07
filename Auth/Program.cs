@@ -61,6 +61,7 @@ app.MapPost("/add-user",
             return Results.Ok(new NewUserDto
             {
                 Login = newUserDto.Login,
+                Password = "pass"
             });
         })
     .RequireAuthorization("Default")

@@ -5,6 +5,12 @@ namespace LinkServer.Dto;
 /// </summary>
 public enum LogicalOperator
 {
+    /// <summary>
+    /// И
+    /// </summary>
     And,
+    /// <summary>
+    /// Или
+    /// </summary>
     Or
 }

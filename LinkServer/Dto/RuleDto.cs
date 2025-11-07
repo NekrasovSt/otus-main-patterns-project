@@ -12,12 +12,12 @@ public class RuleDto
     /// </summary>
     [Length(24, 24)]
     [RegularExpression("[0123456789abcdefABCDEF]{24}")]
-    public string? Id { get; set; }
+    public required string Id { get; set; }
 
     /// <summary>
     /// Название
     /// </summary>
-    public string Name { get; set; }
+    public required string Name { get; set; }
 
     /// <summary>
     /// Порядок проверки правил
@@ -27,10 +27,10 @@ public class RuleDto
     /// <summary>
     /// Ссылка для перехода
     /// </summary>
-    public string Link { get; set; }
+    public required string Link { get; set; }
 
     /// <summary>
     /// Фильтры
     /// </summary>
-    public FilterConditionDto FilterCondition { get; set; }
+    public required FilterConditionDto FilterCondition { get; set; }
 }

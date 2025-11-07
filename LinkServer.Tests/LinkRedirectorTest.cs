@@ -12,6 +12,7 @@ public class LinkRedirectorTest
     public async Task EmptyRules()
     {
         var cache = new Mock<IMemoryCache>();
+        cache.Setup(i=>i.CreateEntry(It.IsAny<object>())).Returns(Mock.Of<ICacheEntry>());
         object cachedRules = Array.Empty<RuleDto>();
         cache.Setup(i => i.TryGetValue("rules", out cachedRules)).Returns(true);
         var service = new LinkRedirector(Mock.Of<IRuleEditorClient>(), cache.Object);
@@ -29,6 +30,7 @@ public class LinkRedirectorTest
     {
         var client = new Mock<IRuleEditorClient>();
         var cache = new Mock<IMemoryCache>();
+        cache.Setup(i=>i.CreateEntry(It.IsAny<object>())).Returns(Mock.Of<ICacheEntry>());
         object cachedRules =
             new[]
             {
@@ -59,7 +61,8 @@ public class LinkRedirectorTest
     {
         var client = new Mock<IRuleEditorClient>();
         var cache = new Mock<IMemoryCache>();
-        object cachedRules = new[]
+        cache.Setup(i=>i.CreateEntry(It.IsAny<object>())).Returns(Mock.Of<ICacheEntry>());
+        var cachedRules = new[]
         {
             new RuleDto()
             {
@@ -72,7 +75,7 @@ public class LinkRedirectorTest
                 }
             }
         };
-        cache.Setup(i => i.TryGetValue("rules", out cachedRules)).Returns(true);
+        client.Setup(i => i.GetRules(CancellationToken.None)).ReturnsAsync(cachedRules);
         var service = new LinkRedirector(client.Object, cache.Object);
 
         var dict = new Dictionary<string, object>()

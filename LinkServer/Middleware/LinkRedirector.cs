@@ -20,19 +20,28 @@ public class LinkRedirector: ILinkRedirector
 
     public async Task<string> RedirectAsync(Dictionary<string, object> dictionary, CancellationToken token)
     {
-        if (!_memoryCache.TryGetValue("rules", out IEnumerable<RuleDto>? rules))
+        if (!_memoryCache.TryGetValue("rules", out IEnumerable<CompiledRule>? compiledRules))
         {
-            rules = await _ruleEditorClient.GetRules(token);
-            _memoryCache.Set("rules", rules);
+            var builder = new DictionaryExpressionBuilder();
+            var rules = await _ruleEditorClient.GetRules(token);
+            compiledRules = rules.Select(rule => new CompiledRule()
+            {
+                Id = rule.Id,
+                Link = rule.Link,
+                Name = rule.Name,
+                Predicate = builder.BuildExpression(rule.FilterCondition.Adapt<FilterCondition>()).Compile(),
+            }).ToList();
+            
+            using var entry = _memoryCache.CreateEntry("rules");
+            entry.Value = compiledRules;
         }
 
 
-        var builder = new DictionaryExpressionBuilder();
-        foreach (var rule in rules)
+        
+        
+        foreach (var rule in compiledRules)
         {
-            var expression = builder.BuildExpression(rule.FilterCondition.Adapt<FilterCondition>());
-
-            if (expression.Compile().Invoke(dictionary))
+            if (rule.Predicate.Invoke(dictionary))
             {
                 return rule.Link;
             }

@@ -1,12 +1,15 @@
 using System.Security.Cryptography;
 using System.Text.Json.Serialization;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
+using RabbitMQ.Client;
 using RuleEditor.Helpers;
 using RuleEditor.Interface;
 using RuleEditor.Repositories;
 using RuleEditor.Services;
+using ServiceUtils.Broker;
 using ServiceUtils.Midleware;
 
 namespace RuleEditor;
@@ -75,6 +78,28 @@ public class Startup
             c.EnableAnnotations();
             var filePath = Path.Combine(AppContext.BaseDirectory, "RuleEditor.xml");
             c.IncludeXmlComments(filePath);
+        });
+        builder.Services.AddMassTransit(x =>
+        {
+            x.SetKebabCaseEndpointNameFormatter();
+
+            x.UsingRabbitMq((context, cfg) =>
+            {
+                var configuration = context.GetRequiredService<IConfiguration>();
+                var host = configuration.GetValue<string>("ConnectionStrings:notification");
+                cfg.Host(host);
+                cfg.ConfigureEndpoints(context);
+
+                cfg.Message<RuleChangedDto>(e =>
+                {
+                    e.SetEntityName("rules");
+                });
+                cfg.Publish<RuleChangedDto>(e =>
+                {
+                    e.ExchangeType = ExchangeType.Direct;
+                    e.Exclude = true;
+                });
+            });
         });
     }
 

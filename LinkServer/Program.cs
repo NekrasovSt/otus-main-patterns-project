@@ -1,9 +1,11 @@
 using LinkServer;
 using LinkServer.Middleware;
 using LinkServer.Services;
+using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi;
+using RabbitMQ.Client;
 using Swashbuckle.AspNetCore.Annotations;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,6 +30,25 @@ builder.Services.AddSwaggerGen(c =>
     c.EnableAnnotations();
     var filePath = Path.Combine(AppContext.BaseDirectory, "LinkServer.xml");
     c.IncludeXmlComments(filePath);
+});
+
+builder.Services.AddMassTransit(x =>
+{
+    x.SetKebabCaseEndpointNameFormatter();
+    x.AddConsumer<RuleChangeConsumer>();
+
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        var configuration = context.GetRequiredService<IConfiguration>();
+        var host = configuration.GetValue<string>("ConnectionStrings:notification");
+        cfg.Host(host);
+        cfg.ReceiveEndpoint("rules", (re) =>
+        {
+            re.ConfigureConsumeTopology = false;
+            re.ConfigureConsumer<RuleChangeConsumer>(context);
+            re.ExchangeType = ExchangeType.Direct;
+        });
+    });
 });
 
 var app = builder.Build();

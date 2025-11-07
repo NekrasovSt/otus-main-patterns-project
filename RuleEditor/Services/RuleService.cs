@@ -1,7 +1,9 @@
 using System.Validation;
+using MassTransit;
 using RuleEditor.Interface;
 using RuleEditor.Models;
 using RuleExecutor;
+using ServiceUtils.Broker;
 using ServiceUtils.Exceptions;
 
 namespace RuleEditor.Services;
@@ -9,10 +11,12 @@ namespace RuleEditor.Services;
 public class RuleService : IRuleService
 {
     private readonly IRuleRepository _ruleRepository;
+    private readonly IPublishEndpoint _sendEndpointProvider;
 
-    public RuleService(IRuleRepository ruleRepository)
+    public RuleService(IRuleRepository ruleRepository, IPublishEndpoint sendEndpointProvider)
     {
-        _ruleRepository = ruleRepository;
+        _ruleRepository = ruleRepository ?? throw new ArgumentNullException(nameof(ruleRepository));
+        _sendEndpointProvider = sendEndpointProvider ?? throw new ArgumentNullException(nameof(sendEndpointProvider));
     }
 
     public Task<IEnumerable<Rule>> GetAllAsync(CancellationToken token)
@@ -30,12 +34,14 @@ public class RuleService : IRuleService
     {
         await ValidateIdAsync(id, token);
         await _ruleRepository.DeleteAsync(id, token);
+        await _sendEndpointProvider.Publish(new RuleChangedDto(), token);
     }
 
     public async Task<Rule> AddAsync(Rule newRule, CancellationToken token)
     {
         newRule.Id = null;
         await ValidateIdAsync(newRule, token);
+        await _sendEndpointProvider.Publish(new RuleChangedDto(), token);
         return await _ruleRepository.AddAsync(newRule, token);
     }
 
@@ -43,6 +49,7 @@ public class RuleService : IRuleService
     {
         await ValidateIdAsync(rule.Id, token);
         await ValidateIdAsync(rule, token);
+        await _sendEndpointProvider.Publish(new RuleChangedDto(), token);
         return await _ruleRepository.UpdateAsync(rule, token);
     }
 

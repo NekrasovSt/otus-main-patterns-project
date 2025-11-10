@@ -7,8 +7,6 @@ using Swashbuckle.AspNetCore.Annotations;
 
 var builder = WebApplication.CreateBuilder(args);
 Startup.SetupServices(builder);
-TypeAdapterConfig<Rule, RuleDto>
-    .NewConfig();
 
 var app = builder.Build();
 await Startup.SetupMiddleware(app);

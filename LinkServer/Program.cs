@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi;
 using RabbitMQ.Client;
+using ServiceUtils.Broker;
 using Swashbuckle.AspNetCore.Annotations;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -48,6 +49,16 @@ builder.Services.AddMassTransit(x =>
             re.ConfigureConsumer<RuleChangeConsumer>(context);
             re.ExchangeType = ExchangeType.Direct;
         });
+
+        cfg.Message<RuleExecutedDto>(e =>
+        {
+            e.SetEntityName("history");
+        });
+        cfg.Publish<RuleExecutedDto>(e =>
+        {
+            e.ExchangeType = ExchangeType.Direct;
+            e.Exclude = true;
+        });
     });
 });
 
@@ -58,7 +69,7 @@ app.UseMiddleware<EnrichMiddleware>();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger( options => options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_0);
+    app.UseSwagger(options => options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_0);
     app.UseSwaggerUI();
 }
 
@@ -68,11 +79,13 @@ app.UseHttpsRedirection();
 app.MapGet("/link", [SwaggerOperation("Переход по ссылке согластно правилу")]
         async (HttpContext context, [FromServices] ILinkRedirector service, CancellationToken token) =>
         {
-            if(context.Items.TryGetValue(EnrichMiddleware.ContextKey, out var value) && value is Dictionary<string, object> dictionary)
+            if (context.Items.TryGetValue(EnrichMiddleware.ContextKey, out var value) &&
+                value is Dictionary<string, object> dictionary)
             {
                 var url = await service.RedirectAsync(dictionary, token);
                 return Results.Redirect(url);
             }
+
             throw new InvalidOperationException("Не достаточно параметров");
         })
     .WithName("Link")

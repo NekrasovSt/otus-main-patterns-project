@@ -19,6 +19,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Auth.Client\Auth.Client.csproj" />
       <ProjectReference Include="..\Auth\Auth.csproj" />
+      <ProjectReference Include="..\HistoryService\HistoryService.csproj" />
       <ProjectReference Include="..\LinkServer\LinkServer.csproj" />
       <ProjectReference Include="..\RuleEditor\RuleEditor.csproj" />
     </ItemGroup>

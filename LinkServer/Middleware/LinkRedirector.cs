@@ -1,8 +1,10 @@
 using LinkServer.Dto;
 using LinkServer.Services;
 using Mapster;
+using MassTransit;
 using Microsoft.Extensions.Caching.Memory;
 using RuleExecutor;
+using ServiceUtils.Broker;
 
 namespace LinkServer.Middleware;
 
@@ -11,6 +13,7 @@ public class LinkRedirector : ILinkRedirector
 {
     private readonly IRuleEditorClient _ruleEditorClient;
     private readonly IMemoryCache _memoryCache;
+    private readonly IPublishEndpoint _sendEndpointProvider;
 
     /// <summary>
     /// Ссылка по умолчанию если не одно правило не сработало
@@ -20,10 +23,11 @@ public class LinkRedirector : ILinkRedirector
     /// <summary>
     /// Конструктор
     /// </summary>
-    public LinkRedirector(IRuleEditorClient ruleEditorClient, IMemoryCache memoryCache)
+    public LinkRedirector(IRuleEditorClient ruleEditorClient, IMemoryCache memoryCache, IPublishEndpoint sendEndpointProvider)
     {
         _ruleEditorClient = ruleEditorClient ?? throw new ArgumentNullException(nameof(ruleEditorClient));
         _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
+        _sendEndpointProvider = sendEndpointProvider ?? throw new ArgumentNullException(nameof(sendEndpointProvider));
     }
 
     /// <inheritdoc />
@@ -49,10 +53,24 @@ public class LinkRedirector : ILinkRedirector
         {
             if (rule.Predicate.Invoke(dictionary))
             {
+                await _sendEndpointProvider.Publish(new RuleExecutedDto()
+                {
+                    Date = DateTime.UtcNow,
+                    RuleId = rule.Id,
+                    RuleName = rule.Name,
+                    Url = rule.Link
+                }, token);
                 return rule.Link;
             }
         }
 
+        await _sendEndpointProvider.Publish(new RuleExecutedDto()
+        {
+            Date = DateTime.UtcNow,
+            RuleId = "",
+            RuleName = "Default",
+            Url = DefaultLink
+        }, token);
         return DefaultLink;
     }
 }

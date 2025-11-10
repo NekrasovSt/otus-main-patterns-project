@@ -32,5 +32,13 @@ var linkServer = builder.AddProject<Projects.LinkServer>("link-server")
     .WithReference(rabbitmq)
     .WaitFor(rabbitmq);
 
+var historyService = builder.AddProject<Projects.HistoryService>("history-server")
+    .WaitFor(linkServer)
+    .WithReference(linkServer)
+    .WithReference(rabbitmq)
+    .WaitFor(rabbitmq)
+    .WithReference(mongodb)
+    .WaitFor(mongodb);
+
 
 builder.Build().Run();

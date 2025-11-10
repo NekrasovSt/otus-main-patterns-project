@@ -1,8 +1,10 @@
 using LinkServer.Dto;
 using LinkServer.Middleware;
 using LinkServer.Services;
+using MassTransit;
 using Microsoft.Extensions.Caching.Memory;
 using Moq;
+using ServiceUtils.Broker;
 
 namespace LinkServer.Tests;
 
@@ -12,10 +14,11 @@ public class LinkRedirectorTest
     public async Task EmptyRules()
     {
         var cache = new Mock<IMemoryCache>();
-        cache.Setup(i=>i.CreateEntry(It.IsAny<object>())).Returns(Mock.Of<ICacheEntry>());
+        cache.Setup(i => i.CreateEntry(It.IsAny<object>())).Returns(Mock.Of<ICacheEntry>());
         object cachedRules = Array.Empty<RuleDto>();
         cache.Setup(i => i.TryGetValue("rules", out cachedRules!)).Returns(true);
-        var service = new LinkRedirector(Mock.Of<IRuleEditorClient>(), cache.Object);
+        var bus = new Mock<IPublishEndpoint>();
+        var service = new LinkRedirector(Mock.Of<IRuleEditorClient>(), cache.Object, bus.Object);
 
         var dict = new Dictionary<string, object>()
         {
@@ -23,6 +26,7 @@ public class LinkRedirectorTest
         };
         var link = await service.RedirectAsync(dict, CancellationToken.None);
         Assert.Equal(LinkRedirector.DefaultLink, link);
+        bus.Verify(i => i.Publish(It.Is<RuleExecutedDto>(j => j.RuleName == "Default"), CancellationToken.None));
     }
 
     [Fact]
@@ -30,7 +34,8 @@ public class LinkRedirectorTest
     {
         var client = new Mock<IRuleEditorClient>();
         var cache = new Mock<IMemoryCache>();
-        cache.Setup(i=>i.CreateEntry(It.IsAny<object>())).Returns(Mock.Of<ICacheEntry>());
+        var bus = new Mock<IPublishEndpoint>();
+        cache.Setup(i => i.CreateEntry(It.IsAny<object>())).Returns(Mock.Of<ICacheEntry>());
         object cachedRules =
             new[]
             {
@@ -48,7 +53,7 @@ public class LinkRedirectorTest
                 }
             };
         cache.Setup(i => i.TryGetValue("rules", out cachedRules!)).Returns(true);
-        var service = new LinkRedirector(client.Object, cache.Object);
+        var service = new LinkRedirector(client.Object, cache.Object, bus.Object);
 
         var dict = new Dictionary<string, object>()
         {
@@ -56,14 +61,16 @@ public class LinkRedirectorTest
         };
         var link = await service.RedirectAsync(dict, CancellationToken.None);
         Assert.Equal(LinkRedirector.DefaultLink, link);
+        bus.Verify(i => i.Publish(It.Is<RuleExecutedDto>(j => j.RuleName == "Default"), CancellationToken.None));
     }
 
     [Fact]
     public async Task RuleWorks()
     {
+        var bus = new Mock<IPublishEndpoint>();
         var client = new Mock<IRuleEditorClient>();
         var cache = new Mock<IMemoryCache>();
-        cache.Setup(i=>i.CreateEntry(It.IsAny<object>())).Returns(Mock.Of<ICacheEntry>());
+        cache.Setup(i => i.CreateEntry(It.IsAny<object>())).Returns(Mock.Of<ICacheEntry>());
         var cachedRules = new[]
         {
             new RuleDto()
@@ -80,7 +87,7 @@ public class LinkRedirectorTest
             }
         };
         client.Setup(i => i.GetRules(CancellationToken.None)).ReturnsAsync(cachedRules);
-        var service = new LinkRedirector(client.Object, cache.Object);
+        var service = new LinkRedirector(client.Object, cache.Object, bus.Object);
 
         var dict = new Dictionary<string, object>()
         {
@@ -88,5 +95,6 @@ public class LinkRedirectorTest
         };
         var link = await service.RedirectAsync(dict, CancellationToken.None);
         Assert.Equal("http://another-link.com", link);
+        bus.Verify(i => i.Publish(It.Is<RuleExecutedDto>(j => j.RuleName == "Rule 1"), CancellationToken.None));
     }
 }

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using LinkServer;
 using LinkServer.Middleware;
 using LinkServer.Services;
@@ -93,3 +94,9 @@ app.MapGet("/link", [SwaggerOperation("Переход по ссылке согл
     .Produces(StatusCodes.Status307TemporaryRedirect);
 
 app.Run();
+
+/// <summary>
+/// Старт сервера
+/// </summary>
+[ExcludeFromCodeCoverage]
+public partial class Program { }

@@ -6,6 +6,17 @@ namespace LinkServer.Tests;
 
 public class RequestFillerTests
 {
+    [Fact]
+    public void Empty()
+    {
+        var accessor = new Mock<IHttpContextAccessor>();
+        accessor.Setup(i => i.HttpContext!.Request.Headers).Returns((IHeaderDictionary)null!);
+
+        var service = new RequestFiller(accessor.Object);
+        var result = service.Fill();
+        Assert.Empty(result);
+    }
+
     [Theory]
     [InlineData(
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",

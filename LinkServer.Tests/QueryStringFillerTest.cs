@@ -31,4 +31,14 @@ public class QueryStringFillerTest
         Assert.Equal("value1,value2", dictionary["$q:param2"]);
         Assert.Equal(2, dictionary.Count);
     }
+    
+    [Fact]
+    public void Empty()
+    {
+        var accessor = new Mock<IHttpContextAccessor>();
+        accessor.Setup(i => i.HttpContext!.Request.Query).Returns((IQueryCollection)null!);
+        var service = new QueryStringFiller(accessor.Object);
+        var dictionary = service.Fill();
+        Assert.Equal(0, dictionary.Count);
+    }
 }

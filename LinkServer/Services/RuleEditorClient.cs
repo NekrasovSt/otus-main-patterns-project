@@ -1,8 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
 using LinkServer.Dto;
 
 namespace LinkServer.Services;
 
 /// <inheritdoc />
+[ExcludeFromCodeCoverage]
 public class RuleEditorClient : IRuleEditorClient
 {
     private readonly IHttpClientFactory _httpClientFactory;

@@ -90,6 +90,17 @@ public class RuleServiceTests
             }, CancellationToken.None);
         endpoint.Verify(i => i.Publish(It.IsAny<RuleChangedDto>(), It.IsAny<CancellationToken>()), Times.Once());
     }
+
+    [Fact]
+    public async Task GetAll()
+    {
+        var endpoint = new Mock<IPublishEndpoint>();
+        var repository = new Mock<IRuleRepository>();
+        repository.Setup(i => i.GetAllAsync(CancellationToken.None));
+        var service = new RuleService(repository.Object, endpoint.Object);
+        var rules = await service.GetAllAsync(CancellationToken.None);
+        Assert.Empty(rules);
+    }
     
     
     [Fact]

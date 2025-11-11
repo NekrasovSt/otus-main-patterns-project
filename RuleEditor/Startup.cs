@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text.Json.Serialization;
 using MassTransit;
@@ -22,6 +23,7 @@ public static class Startup
     /// <summary>
     /// Регистрация сервисов
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public static void SetupServices(WebApplicationBuilder builder)
     {
         
@@ -112,6 +114,7 @@ public static class Startup
     /// <summary>
     /// Настройка Middleware
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public static async Task SetupMiddleware(WebApplication app)
     {
         if (app.Environment.IsDevelopment())

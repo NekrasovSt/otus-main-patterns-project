@@ -96,7 +96,7 @@ public class RuleRepository : IRuleRepository
             var newRule = new Rule
             {
                 Order = 0,
-                Name = "Демо правило 1",
+                Name = "Demo rule 1",
                 FilterCondition = new FilterCondition()
                 {
                     Operator = "IN",

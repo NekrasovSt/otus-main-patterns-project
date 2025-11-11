@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Mapster;
 using RuleEditor;
 using RuleEditor.Dto;
@@ -74,3 +75,9 @@ app.MapPut("/rules", [SwaggerOperation("Обновить правила")]
     .Produces(StatusCodes.Status400BadRequest)
     .Produces(StatusCodes.Status401Unauthorized);
 app.Run();
+
+/// <summary>
+/// Старт сервера
+/// </summary>
+[ExcludeFromCodeCoverage]
+public partial class Program { }

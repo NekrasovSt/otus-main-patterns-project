@@ -1,10 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace ServiceUtils.Exceptions;
 
-public class InvalidPropertyException: Exception
+[ExcludeFromCodeCoverage]
+public class InvalidPropertyException(string massage) : Exception(massage)
 {
-    public InvalidPropertyException(string massage) : base(massage)
-    {
-    }
     public required string PropertyName { get; set; }
     public string? Id { get; set; }
 }

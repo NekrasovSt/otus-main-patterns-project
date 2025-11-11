@@ -1,11 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace ServiceUtils.Exceptions;
 
-public class EntityNotException : Exception
+[ExcludeFromCodeCoverage]
+public class EntityNotException(string id) : Exception($"Сущность с ид {id} не найдена")
 {
-    public EntityNotException(string id) : base($"Сущность с ид {id} не найдена")
-    {
-        Id = id;
-    }
-
-    public string Id { get; set; }
+    public string Id { get; set; } = id;
 }

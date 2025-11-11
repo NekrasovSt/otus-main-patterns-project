@@ -1,10 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace ServiceUtils.Exceptions;
 
-public class EntityAlreadyExistException : Exception
+[ExcludeFromCodeCoverage]
+public class EntityAlreadyExistException(string message) : Exception(message)
 {
-    public EntityAlreadyExistException(string message) : base(message)
-    {
-    }
-
     public required string PropertyName { get; set; }
 }

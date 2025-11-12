@@ -20,6 +20,11 @@ jobs:
       - name: Build
         run: |
           dotnet build --configuration Release
+      - name: Install libssl1.1 (restores libcrypto.so.1.1 which is required by MongoDB binaries
+        run: |
+          "deb http://security.ubuntu.com/ubuntu focal-security main" | sudo tee /etc/apt/sources.list.d/focal-security.list
+          apt update
+          apt install -y libssl1.1
       - name: RuleEditor Test
         run: dotnet test RuleEditor.Tests/ -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=opencover -p:SkipAutoProps=true -p:Exclude=\"[ServiceUtils*]*,[RuleExecutor*]*\" --configuration Release
       - name: LinkService Test

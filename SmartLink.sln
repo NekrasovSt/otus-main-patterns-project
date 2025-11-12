@@ -24,7 +24,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceDefaults", "ServiceD
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HistoryService", "HistoryService\HistoryService.csproj", "{ABBBDCAE-D800-4014-8DE5-978DA48CBFDF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceUtils.Tests", "Serviceutils.Tests\ServiceUtils.Tests.csproj", "{E7661DDF-D96D-4B65-A679-E64FEB32690D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceUtils.Tests", "ServiceUtils.Tests\ServiceUtils.Tests.csproj", "{E7661DDF-D96D-4B65-A679-E64FEB32690D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

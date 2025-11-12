@@ -2,7 +2,7 @@ name: .NET
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "development" ]
   pull_request:
     branches: [ "master" ]
 
@@ -20,5 +20,9 @@ jobs:
       - name: Build
         run: |
           dotnet build --configuration Release
-      - name: Test
-        run: dotnet test . -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=opencover -p:SkipAutoProps=true --configuration Release
+      - name: RuleEditor Test
+        run: dotnet test RuleEditor.Tests/ -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=opencover -p:SkipAutoProps=true -p:Exclude=\"[ServiceUtils*]*,[RuleExecutor*]*\" --configuration Release
+      - name: LinkService Test
+        run: dotnet test LinkServer.Tests/ -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=opencover -p:SkipAutoProps=true -p:Exclude=\"[ServiceUtils*]*,[RuleExecutor*]*,[ServiceDefaults*]*\" --configuration Release
+      - name: ServiceUtils Test
+        run: dotnet test ServiceUtils.Tests/ -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=opencover -p:SkipAutoProps=true --configuration Release

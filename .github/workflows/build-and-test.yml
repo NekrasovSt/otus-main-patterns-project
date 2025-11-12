@@ -1,0 +1,33 @@
+name: .NET
+
+on:
+  push:
+    branches: [ "master", "development" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Build
+        run: |
+          dotnet build --configuration Release
+      - name: Install libssl1.1 (restores libcrypto.so.1.1 which is required by MongoDB binaries
+        run: |
+          echo "deb http://security.ubuntu.com/ubuntu focal-security main" | sudo tee /etc/apt/sources.list.d/focal-security.list
+          sudo apt update
+          sudo apt install -y libssl1.1
+      - name: RuleEditor Test
+        run: dotnet test RuleEditor.Tests/ -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=opencover -p:SkipAutoProps=true -p:Exclude=\"[ServiceUtils*]*,[RuleExecutor*]*\" --configuration Release
+      - name: LinkService Test
+        run: dotnet test LinkServer.Tests/ -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=opencover -p:SkipAutoProps=true -p:Exclude=\"[ServiceUtils*]*,[RuleExecutor*]*,[ServiceDefaults*]*\" --configuration Release
+      - name: ServiceUtils Test
+        run: dotnet test ServiceUtils.Tests/ -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=opencover -p:SkipAutoProps=true --configuration Release

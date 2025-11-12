@@ -1,0 +1,32 @@
+@page "/new-user"
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-auto">
+            <h3>Добавить пользователя</h3>
+            <EditForm EditContext="_context" OnSubmit="Submit">
+                <DataAnnotationsValidator/>
+                <div class="mb-3 form-check">
+                    <label for="login" class="form-label">Логин:</label>
+                    <InputText id="login" class="form-control" @bind-Value="_request.Login"/>
+                    <ValidationMessage For="@(() => _request.Login)"/>
+                </div>
+                <div class="mb-3 form-check">
+                    <label for="password" class="form-label">Пароль:</label>
+                    <InputText type="password" id="password" class="form-control" @bind-Value="_request.Password"/>
+                    <ValidationMessage For="@(() => _request.Password)"/>
+                </div>
+                
+                <div class="mb-3 form-check">
+                    <label for="repeat-password" class="form-label">Повторите пароль:</label>
+                    <InputText type="password" id="repeat-password" class="form-control" @bind-Value="_request.ConfirmPassword"/>
+                    <ValidationMessage For="@(() => _request.ConfirmPassword)"/>
+                </div>
+
+                <div class="validation-message">@_errorMessage</div>
+                <button type="submit" class="btn btn-primary"
+                        disabled="@(!_context.IsModified() || !_context.Validate())">Вход
+                </button>
+            </EditForm>
+        </div>
+    </div>
+</div>

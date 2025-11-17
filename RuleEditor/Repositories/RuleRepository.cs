@@ -37,7 +37,7 @@ public class RuleRepository : IRuleRepository
             .FirstOrDefaultAsync(token);
         if (rule == null)
         {
-            throw new EntityNotException(id);
+            throw new EntityNotFoundException(id);
         }
 
         return rule;
@@ -51,7 +51,7 @@ public class RuleRepository : IRuleRepository
             .FindOneAndDeleteAsync(p => p.Id == id, cancellationToken: token);
         if (rule == null)
         {
-            throw new EntityNotException(id);
+            throw new EntityNotFoundException(id);
         }
     }
 
@@ -158,7 +158,7 @@ public class RuleRepository : IRuleRepository
             .FindOneAndReplaceAsync(p => p.Id == rule.Id, rule, new() { ReturnDocument = ReturnDocument.After }, cancellationToken: token);
         if (updatedRule == null)
         {
-            throw new EntityNotException(rule.Id);
+            throw new EntityNotFoundException(rule.Id);
         }
         return updatedRule;
     }

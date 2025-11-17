@@ -1,7 +1,8 @@
 using System.Net;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using ServiceUtils.Dto;
-using ServiceUtils.Exceptions;
+using ServiceUtils.Interfaces;
 
 namespace ServiceUtils.Midleware;
 
@@ -9,11 +10,13 @@ public class ErrorHandlerMiddleware
 {
     // Holds the next middleware in the pipeline to invoke
     private readonly RequestDelegate _next;
+    private readonly IServiceProvider _serviceProvider;
 
     // Constructor injects the next middleware and a logger
-    public ErrorHandlerMiddleware(RequestDelegate next)
+    public ErrorHandlerMiddleware(RequestDelegate next, IServiceProvider serviceProvider)
     {
-        _next = next;
+        _next = next ?? throw new ArgumentNullException(nameof(next));
+        _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
     }
 
     // This method is called for every HTTP request. Handles errors during the request processing.
@@ -23,23 +26,20 @@ public class ErrorHandlerMiddleware
         {
             await _next(context);
         }
-        catch (EntityNotException e)
+        catch (Exception ex)
         {
-            context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-            await context.Response.WriteAsJsonAsync(new ErrorDto() { Id = e.Id, Message = e.Message });
-        }
-        catch (InvalidPropertyException e)
-        {
-            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            await context.Response.WriteAsJsonAsync(new ErrorDto() { Id = e.Id, Message = e.Message });
-        }
-        catch (EntityAlreadyExistException e)
-        {
-            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            await context.Response.WriteAsJsonAsync(new ErrorDto() { Message = e.Message });
-        }
-        catch (Exception)
-        {
+            var handlers = _serviceProvider.GetServices<IExceptionHandler>();
+            foreach (var handler in handlers)
+            {
+                var result = handler.HandleException(ex);
+                if (result != null)
+                {
+                    context.Response.StatusCode = result.Code;
+                    await context.Response.WriteAsJsonAsync(result.Error);
+                    return;
+                }
+            }
+            
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             await context.Response.WriteAsJsonAsync(new ErrorDto() { Message = "Внутрення ошибка" });
         }

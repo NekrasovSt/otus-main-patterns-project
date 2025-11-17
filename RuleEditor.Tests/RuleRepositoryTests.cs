@@ -46,7 +46,7 @@ public class RuleRepositoryTests
 
         await repository.InitDBAsync();
 
-        await Assert.ThrowsAsync<EntityNotException>(() =>
+        await Assert.ThrowsAsync<EntityNotFoundException>(() =>
             repository.GetAsync("6900b8a5ce7ec3c503c5a3e3", CancellationToken.None));
     }
 
@@ -78,7 +78,7 @@ public class RuleRepositoryTests
 
         await repository.InitDBAsync();
 
-        await Assert.ThrowsAsync<EntityNotException>(() =>
+        await Assert.ThrowsAsync<EntityNotFoundException>(() =>
             repository.DeleteAsync("6900b8a5ce7ec3c503c5a3e3", CancellationToken.None));
     }
 
@@ -182,7 +182,7 @@ public class RuleRepositoryTests
             Link = "https://www.fr.com",
         };
         
-        await Assert.ThrowsAsync<EntityNotException>(() =>
+        await Assert.ThrowsAsync<EntityNotFoundException>(() =>
             repository.UpdateAsync(newRule, CancellationToken.None));
     }
     

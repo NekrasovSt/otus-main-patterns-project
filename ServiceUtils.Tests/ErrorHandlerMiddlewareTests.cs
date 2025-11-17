@@ -1,21 +1,35 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using ServiceUtils.Exceptions;
+using ServiceUtils.Handlers;
+using ServiceUtils.Interfaces;
 using ServiceUtils.Midleware;
 
 namespace ServiceUtils.Tests;
 
 public class ErrorHandlerMiddlewareTests
 {
+    private IServiceProvider GetServiceProvider()
+    {
+        var collection = new ServiceCollection();
+
+        collection.AddTransient<IExceptionHandler, EntityAlreadyExistExceptionHandler>();
+        collection.AddTransient<IExceptionHandler, EntityNotFoundExceptionHandler>();
+        collection.AddTransient<IExceptionHandler, InvalidPropertyExceptionHandler>();
+        return collection.BuildServiceProvider();
+    }
+
     [Fact]
     public async Task NotFound()
     {
         Task Func(HttpContext contex)
         {
-            throw new EntityNotException("1");
+            throw new EntityNotFoundException("1");
         }
 
-        var item = new ErrorHandlerMiddleware(Func);
+        var serviceProvider = GetServiceProvider();
+        var item = new ErrorHandlerMiddleware(Func, serviceProvider);
 
         var httpContext = new DefaultHttpContext();
         await item.InvokeAsync(httpContext);
@@ -34,14 +48,15 @@ public class ErrorHandlerMiddlewareTests
             };
         }
 
-        var item = new ErrorHandlerMiddleware(Func);
+        var serviceProvider = GetServiceProvider();
+        var item = new ErrorHandlerMiddleware(Func, serviceProvider);
 
         var httpContext = new DefaultHttpContext();
         await item.InvokeAsync(httpContext);
 
         Assert.Equal(400, httpContext.Response.StatusCode);
     }
-    
+
     [Fact]
     public async Task EntityAlreadyExistBadRequest()
     {
@@ -53,14 +68,15 @@ public class ErrorHandlerMiddlewareTests
             };
         }
 
-        var item = new ErrorHandlerMiddleware(Func);
+        var serviceProvider = GetServiceProvider();
+        var item = new ErrorHandlerMiddleware(Func, serviceProvider);
 
         var httpContext = new DefaultHttpContext();
         await item.InvokeAsync(httpContext);
 
         Assert.Equal(400, httpContext.Response.StatusCode);
     }
-    
+
     [Fact]
     public async Task OtherExceptionBadRequest()
     {
@@ -69,14 +85,15 @@ public class ErrorHandlerMiddlewareTests
             throw new Exception();
         }
 
-        var item = new ErrorHandlerMiddleware(Func);
+        var serviceProvider = GetServiceProvider();
+        var item = new ErrorHandlerMiddleware(Func, serviceProvider);
 
         var httpContext = new DefaultHttpContext();
         await item.InvokeAsync(httpContext);
 
         Assert.Equal(500, httpContext.Response.StatusCode);
     }
-    
+
     [Fact]
     public async Task Ok()
     {
@@ -85,11 +102,30 @@ public class ErrorHandlerMiddlewareTests
             return Task.CompletedTask;
         }
 
-        var item = new ErrorHandlerMiddleware(Func);
+        var serviceProvider = GetServiceProvider();
+        var item = new ErrorHandlerMiddleware(Func, serviceProvider);
 
         var httpContext = new DefaultHttpContext();
         await item.InvokeAsync(httpContext);
 
         Assert.Equal(200, httpContext.Response.StatusCode);
+    }
+
+    [Fact]
+    public void NullArgumentExceptionDelegate()
+    {
+        var serviceProvider = GetServiceProvider();
+        Assert.Throws<ArgumentNullException>(() => new ErrorHandlerMiddleware(null!, serviceProvider));
+    }
+
+    [Fact]
+    public void NullArgumentExceptionProvider()
+    {
+        Task Func(HttpContext contex)
+        {
+            return Task.CompletedTask;
+        }
+
+        Assert.Throws<ArgumentNullException>(() => new ErrorHandlerMiddleware(Func, null!));
     }
 }

@@ -1,13 +1,18 @@
 using System.Security.Cryptography;
+using HistoryService.Context;
 using HistoryService.Helpers;
 using HistoryService.Interfaces;
+using HistoryService.Models;
+using HistoryService.Queries;
 using HistoryService.Repositories;
 using HistoryService.Service;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 using RabbitMQ.Client;
+using Path = System.IO.Path;
 
 namespace HistoryService;
 
@@ -48,6 +53,7 @@ public class Startup
                 });
             });
         });
+        var provider = builder.Services.BuildServiceProvider();
         builder.Services.AddAuthentication(options =>
             {
                 // устанавливаем дефолтную схему как JWT
@@ -56,7 +62,7 @@ public class Startup
             })
             .AddJwtBearer(options =>
             {
-                var store = builder.Services.BuildServiceProvider().GetRequiredService<IKeyStore>();
+                var store = provider.GetRequiredService<IKeyStore>();
                 // создаем объект RSA
                 var publicKey = RSA.Create();
                 // импортируем публичный ключ для проверки подписи
@@ -88,6 +94,18 @@ public class Startup
             var filePath = Path.Combine(AppContext.BaseDirectory, "HistoryService.xml");
             c.IncludeXmlComments(filePath);
         });
+        builder.Services.AddDbContext<ApplicationContext>(options =>
+        {
+            options.UseMongoDB(provider.GetRequiredService<IMongoClient>(), "history");
+        });
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddGraphQLServer()
+            .AddAuthorization()
+            .RegisterDbContextFactory<ApplicationContext>() //Регистрация БД для графа
+            .AddQueryType<HistoryQuery>() // Регистрация Query запросов
+            .AddProjections()
+            .AddFiltering()
+            .AddSorting();
     }
 
     /// <summary>
@@ -102,5 +120,45 @@ public class Startup
         }
 
         app.UseHttpsRedirection();
+        
+        app.MapGraphQL("/graphql");
+        
+        InitDb(app);
+    }
+
+    private static void InitDb(WebApplication app)
+    {
+        if (app.Environment.IsDevelopment())
+        {
+            
+            using var scope = app.Services.CreateScope();
+            using var context = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
+            
+            context.Database.EnsureCreated();
+
+            context.Executions.AddRange(
+                new RuleExecutedOrm
+                {
+                    Date = new DateTime(2021, 1, 1), RuleId = "6900b8a5ce7ec3c503c5a3e3", RuleName = "rule 1",
+                    Url = "http://ya.com/1"
+                },
+                new RuleExecutedOrm
+                {
+                    Date = new DateTime(2021, 1, 1), RuleId = "6900b8a5ce7ec3c503c5a3e3", RuleName = "rule 2",
+                    Url = "http://ya.com/2"
+                },
+                new RuleExecutedOrm
+                {
+                    Date = new DateTime(2023, 1, 1), RuleId = "6900b8a5ce7ec3c503c5a3e3", RuleName = "rule 3",
+                    Url = "http://ya.com/3"
+                },
+                new RuleExecutedOrm
+                {
+                    Date = new DateTime(2024, 1, 1), RuleId = "6900b8a5ce7ec3c503c5a3e3", RuleName = "rule 4",
+                    Url = "http://ya.com/4"
+                }
+            );
+            context.SaveChanges();
+        }
     }
 }

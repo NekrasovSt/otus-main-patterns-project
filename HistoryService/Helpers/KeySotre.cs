@@ -1,4 +1,5 @@
 using HistoryService.Interfaces;
+using Path = System.IO.Path;
 
 namespace HistoryService.Helpers;
 
